@@ -27,5 +27,4 @@ if [[ -z "$TARGET_PANE" ]]; then
 fi
 
 tmux kill-pane -t "$TARGET_PANE"
-tmux select-layout -t "$SOURCE_PANE" even-horizontal >/dev/null 2>&1 || true
 tmux display-message "continuous-view stopped: source=$SOURCE_PANE target=$TARGET_PANE"

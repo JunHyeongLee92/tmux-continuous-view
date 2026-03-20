@@ -8,8 +8,11 @@ from .core import (
     is_supported_command,
     render_frame,
 )
+from .layout import choose_three_pane_widths, choose_viewer_width
 
 __all__ = [
+    "choose_three_pane_widths",
+    "choose_viewer_width",
     "compute_visible_top",
     "extract_continuous_lines",
     "fit_ansi_line",
