@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-03-23
+
+### 수정
+- `capture-pane -J` 사용으로 화면 줄이 합쳐지던 문제를 제거해, 줄바꿈으로 넘어간 텍스트가 viewer1→source 경계에서도 실제 화면 줄 기준으로 자연스럽게 이어지도록 수정
+
+### 테스트
+- wrapped screen row 보존 및 depth 1 연속성 검증용 `tests/test_tmux_client.py` 추가
+
 ## 2026-03-20
 
 ### 추가

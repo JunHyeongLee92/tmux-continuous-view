@@ -46,7 +46,7 @@ class TmuxClient:
             "#{pane_id}\t#{pane_height}\t#{pane_width}\t#{pane_current_command}\t#{scroll_position}",
         )
         pane_ref, height, width, command, scroll_position = metadata.split("\t")
-        contents = self._run("capture-pane", "-p", "-e", "-J", "-S", "-", "-t", pane_id)
+        contents = self._run("capture-pane", "-p", "-e", "-S", "-", "-t", pane_id)
         lines = contents.splitlines() or [""]
         return PaneSnapshot(
             pane_id=pane_ref,
