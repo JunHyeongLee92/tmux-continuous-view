@@ -1,6 +1,10 @@
 import unittest
 
-from continuous_view.layout import choose_three_pane_widths, choose_viewer_width
+from continuous_view.layout import (
+    choose_rebalanced_two_pane_width,
+    choose_three_pane_widths,
+    choose_viewer_width,
+)
 
 
 class ContinuousViewLayoutTests(unittest.TestCase):
@@ -30,6 +34,29 @@ class ContinuousViewLayoutTests(unittest.TestCase):
     def test_choose_viewer_width_rejects_non_positive_desired_width(self):
         self.assertIsNone(
             choose_viewer_width(available_width=160, desired_width=0, min_source_width=90)
+        )
+
+    def test_choose_rebalanced_two_pane_width_restores_even_split(self):
+        self.assertEqual(
+            choose_rebalanced_two_pane_width(total_width=120, min_source_width=40),
+            60,
+        )
+
+    def test_choose_rebalanced_two_pane_width_assigns_remainder_to_source_side(self):
+        self.assertEqual(
+            choose_rebalanced_two_pane_width(total_width=121, min_source_width=40),
+            60,
+        )
+
+    def test_choose_rebalanced_two_pane_width_clamps_when_source_minimum_blocks_half_split(self):
+        self.assertEqual(
+            choose_rebalanced_two_pane_width(total_width=100, min_source_width=60),
+            40,
+        )
+
+    def test_choose_rebalanced_two_pane_width_returns_none_when_split_is_impossible(self):
+        self.assertIsNone(
+            choose_rebalanced_two_pane_width(total_width=90, min_source_width=90)
         )
 
     def test_choose_three_pane_widths_balances_evenly_when_possible(self):

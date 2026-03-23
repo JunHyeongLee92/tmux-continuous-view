@@ -8,9 +8,10 @@ from .core import (
     is_supported_command,
     render_frame,
 )
-from .layout import choose_three_pane_widths, choose_viewer_width
+from .layout import choose_rebalanced_two_pane_width, choose_three_pane_widths, choose_viewer_width
 
 __all__ = [
+    "choose_rebalanced_two_pane_width",
     "choose_three_pane_widths",
     "choose_viewer_width",
     "compute_visible_top",

@@ -16,6 +16,16 @@ def choose_viewer_width(*, available_width: int, desired_width: int, min_source_
     return min(normalized_desired, max_viewer_width)
 
 
+def choose_rebalanced_two_pane_width(*, total_width: int, min_source_width: int) -> int | None:
+    normalized_total = max(total_width, 0)
+    desired_width = normalized_total // 2
+    return choose_viewer_width(
+        available_width=normalized_total,
+        desired_width=desired_width,
+        min_source_width=min_source_width,
+    )
+
+
 def choose_three_pane_widths(
     *,
     total_width: int,
