@@ -29,8 +29,6 @@ def compute_visible_top(total_lines: int, pane_height: int, scroll_position: int
     visible_top = total_lines - pane_height - max(scroll_position, 0)
     return max(0, visible_top)
 
-
-
 def _pad_to_height(lines: list[str], viewport_height: int, *, align_bottom: bool) -> list[str]:
     if len(lines) >= viewport_height:
         return lines[:viewport_height]
@@ -38,6 +36,24 @@ def _pad_to_height(lines: list[str], viewport_height: int, *, align_bottom: bool
     padding = [""] * (viewport_height - len(lines))
     return padding + lines if align_bottom else lines + padding
 
+
+def _boundary_overlap_rows(*, lines: list[str], boundary_index: int, source_width: int | None) -> int:
+    if source_width is None or source_width <= 0:
+        return 0
+    if boundary_index <= 0 or boundary_index >= len(lines):
+        return 0
+    if _visible_width(lines[boundary_index - 1]) < source_width:
+        return 0
+
+    overlap_rows = 0
+    index = boundary_index
+    while index < len(lines):
+        overlap_rows += 1
+        if _visible_width(lines[index]) < source_width:
+            break
+        index += 1
+
+    return overlap_rows
 
 
 def extract_continuous_lines(
@@ -47,6 +63,7 @@ def extract_continuous_lines(
     viewport_height: int,
     position: str = "above",
     source_height: int | None = None,
+    source_width: int | None = None,
     depth: int = 1,
 ) -> list[str]:
     normalized_lines = list(lines)
@@ -64,9 +81,16 @@ def extract_continuous_lines(
 
     end = max(0, clamped_top - viewport_height * (depth - 1))
     start = max(0, end - viewport_height)
+    if depth > 1:
+        overlap_rows = _boundary_overlap_rows(
+            lines=normalized_lines,
+            boundary_index=end,
+            source_width=source_width,
+        )
+        if overlap_rows > 0:
+            start = min(end, start + overlap_rows)
+            end = min(len(normalized_lines), end + overlap_rows)
     return _pad_to_height(normalized_lines[start:end], viewport_height, align_bottom=True)
-
-
 
 def format_status_line(*, pane_id: str, depth: int, command: str | None, scroll_position: int) -> str:
     parts = [f"CV d{max(depth, 1)}", pane_id]

@@ -82,6 +82,40 @@ class ContinuousViewCoreTests(unittest.TestCase):
 
         self.assertEqual(extracted, ["", "", "line 1"])
 
+    def test_extract_continuous_lines_depth_two_overlaps_wrapped_boundary_to_reduce_skip(self):
+        lines = [
+            "A1111",
+            "A2222",
+            "A3333",
+            "A4",
+            "B1111",
+            "B2222",
+            "B3333",
+            "B4",
+            "C1111",
+            "C2222",
+            "C3333",
+            "C4",
+            "D1111",
+            "D2222",
+            "D3333",
+            "D4",
+            "E1111",
+            "E2222",
+            "E3333",
+            "E4",
+        ]
+
+        extracted = extract_continuous_lines(
+            lines=lines,
+            visible_top=20,
+            viewport_height=5,
+            depth=2,
+            source_width=5,
+        )
+
+        self.assertEqual(extracted, ["C4", "D1111", "D2222", "D3333", "D4"])
+
     def test_format_status_line_is_compact_and_human_readable(self):
         status = format_status_line(pane_id="%31", depth=2, command="codex", scroll_position=7)
         self.assertEqual(status, "CV d2 · %31 · codex · ↑7")

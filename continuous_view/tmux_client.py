@@ -82,6 +82,7 @@ class TmuxClient:
             viewport_height=max(target_height - 1, 0),
             position=position,
             source_height=snapshot.height,
+            source_width=snapshot.width,
             depth=effective_depth,
         )
         return status, lines

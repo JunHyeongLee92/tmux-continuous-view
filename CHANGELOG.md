@@ -4,9 +4,11 @@
 
 ### 수정
 - `capture-pane -J` 사용으로 화면 줄이 합쳐지던 문제를 제거해, 줄바꿈으로 넘어간 텍스트가 viewer1→source 경계에서도 실제 화면 줄 기준으로 자연스럽게 이어지도록 수정
+- 3분할에서 wrapped line 경계가 depth 1/depth 2 사이를 가를 때 일부 내용이 크게 건너뛰어 보이던 문제를 줄이기 위해 depth 2 경계에 wrapped row overlap 보정 추가
 
 ### 테스트
 - wrapped screen row 보존 및 depth 1 연속성 검증용 `tests/test_tmux_client.py` 추가
+- depth 2 wrapped boundary overlap 회귀 테스트 추가
 
 ## 2026-03-20
 
