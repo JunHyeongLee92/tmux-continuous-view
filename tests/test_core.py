@@ -134,14 +134,29 @@ class ContinuousViewCoreTests(unittest.TestCase):
     def test_fit_ansi_line_preserves_escape_sequences_when_padding(self):
         line = "\x1b[31mred\x1b[0m"
         rendered = fit_ansi_line(line, 6)
-        self.assertEqual(rendered, "\x1b[31mred\x1b[0m   ")
+        self.assertEqual(rendered, "\x1b[31mred\x1b[0m")
 
     def test_fit_ansi_line_truncates_by_visible_width_not_raw_escape_length(self):
         line = "\x1b[31mabcdef\x1b[0m"
         rendered = fit_ansi_line(line, 4)
         self.assertEqual(rendered, "\x1b[31mabc~\x1b[0m")
 
-    def test_render_frame_includes_status_and_exact_height(self):
+    def test_render_frame_includes_status_and_exact_height_when_enabled(self):
+        frame = render_frame(
+            content_lines=["alpha", "beta"],
+            width=12,
+            height=4,
+            status="source=%1 scroll=3",
+            show_status=True,
+        )
+
+        rendered_lines = frame.split("\n")
+
+        self.assertEqual(rendered_lines[0], "source=%1 s~")
+        self.assertEqual(rendered_lines[1:], ["alpha", "beta", ""])
+        self.assertEqual(len(rendered_lines), 4)
+
+    def test_render_frame_uses_full_height_for_content_by_default(self):
         frame = render_frame(
             content_lines=["alpha", "beta"],
             width=12,
@@ -149,10 +164,9 @@ class ContinuousViewCoreTests(unittest.TestCase):
             status="source=%1 scroll=3",
         )
 
-        rendered_lines = frame.splitlines()
+        rendered_lines = frame.split("\n")
 
-        self.assertEqual(rendered_lines[0], "source=%1 s~")
-        self.assertEqual(rendered_lines[1:], ["alpha       ", "beta        ", "            "])
+        self.assertEqual(rendered_lines, ["alpha", "beta", "", ""])
         self.assertEqual(len(rendered_lines), 4)
 
 

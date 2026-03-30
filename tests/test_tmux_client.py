@@ -58,7 +58,45 @@ class ContinuousViewTmuxClientTests(unittest.TestCase):
         status, lines = client.extract_view_lines("%1", target_height=3, position="above", depth=1)
 
         self.assertEqual(status, "CV d1 · %1 · bash")
-        self.assertEqual(lines, ["older row", "continued row"])
+        self.assertEqual(lines, ["", "older row", "continued row"])
+
+    def test_extract_view_lines_uses_full_target_height_when_status_hidden(self):
+        client = SnapshotTmuxClient(
+            PaneSnapshot(
+                pane_id="%1",
+                height=2,
+                width=80,
+                command="bash",
+                scroll_position=0,
+                lines=["row 1", "row 2", "row 3", "row 4", "row 5"],
+            )
+        )
+
+        _, lines = client.extract_view_lines("%1", target_height=3, position="above", depth=1)
+
+        self.assertEqual(lines, ["row 1", "row 2", "row 3"])
+
+    def test_extract_view_lines_reserves_one_row_when_status_visible(self):
+        client = SnapshotTmuxClient(
+            PaneSnapshot(
+                pane_id="%1",
+                height=2,
+                width=80,
+                command="bash",
+                scroll_position=0,
+                lines=["row 1", "row 2", "row 3", "row 4", "row 5"],
+            )
+        )
+
+        _, lines = client.extract_view_lines(
+            "%1",
+            target_height=3,
+            position="above",
+            depth=1,
+            show_status=True,
+        )
+
+        self.assertEqual(lines, ["row 2", "row 3"])
 
 
 if __name__ == "__main__":

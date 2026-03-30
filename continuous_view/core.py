@@ -174,19 +174,28 @@ def fit_ansi_line(text: str, width: int) -> str:
     if saw_ansi and not rendered.endswith(ANSI_RESET):
         rendered += ANSI_RESET
     visible_count = _visible_width(rendered)
-    if visible_count < width:
-        rendered += " " * (width - visible_count)
     return rendered
 
 
 
-def render_frame(*, content_lines: Iterable[str], width: int, height: int, status: str) -> str:
+def render_frame(
+    *,
+    content_lines: Iterable[str],
+    width: int,
+    height: int,
+    status: str,
+    show_status: bool = False,
+) -> str:
     if width <= 0 or height <= 0:
         return ""
 
     normalized = list(content_lines)
-    body_height = max(height - 1, 0)
-    body = _pad_to_height(normalized[:body_height], body_height, align_bottom=False)
-    frame_lines = [fit_ansi_line(status, width)]
-    frame_lines.extend(fit_ansi_line(line, width) for line in body)
+    if show_status:
+        body_height = max(height - 1, 0)
+        body = _pad_to_height(normalized[:body_height], body_height, align_bottom=False)
+        frame_lines = [fit_ansi_line(status, width)]
+        frame_lines.extend(fit_ansi_line(line, width) for line in body)
+    else:
+        body = _pad_to_height(normalized[:height], height, align_bottom=False)
+        frame_lines = [fit_ansi_line(line, width) for line in body]
     return "\n".join(frame_lines)

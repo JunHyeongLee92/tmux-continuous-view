@@ -20,6 +20,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--depth", type=int, default=1)
     parser.add_argument("--interval", type=float, default=0.15)
     parser.add_argument("--plain", action="store_true", help="Strip ANSI by using tmux joined capture only")
+    parser.add_argument(
+        "--show-status",
+        action="store_true",
+        help="Render a one-line status header inside viewer panes",
+    )
     return parser.parse_args()
 
 
@@ -41,8 +46,20 @@ def main() -> int:
     try:
         while True:
             width, height = get_target_dimensions(tmux, args.target_pane)
-            status, lines = tmux.extract_view_lines(args.source_pane, height, args.position, depth=args.depth)
-            frame = render_frame(content_lines=lines, width=width, height=height, status=status)
+            status, lines = tmux.extract_view_lines(
+                args.source_pane,
+                height,
+                args.position,
+                depth=args.depth,
+                show_status=args.show_status,
+            )
+            frame = render_frame(
+                content_lines=lines,
+                width=width,
+                height=height,
+                status=status,
+                show_status=args.show_status,
+            )
 
             if frame != last_frame:
                 sys.stdout.write(ESC_CLEAR)

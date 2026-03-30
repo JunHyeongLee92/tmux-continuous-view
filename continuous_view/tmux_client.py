@@ -63,6 +63,7 @@ class TmuxClient:
         target_height: int,
         position: str,
         depth: int = 1,
+        show_status: bool = False,
     ) -> tuple[str, list[str]]:
         snapshot = self.capture_snapshot(source_pane)
         if not is_supported_command(snapshot.command):
@@ -79,7 +80,7 @@ class TmuxClient:
         lines = extract_continuous_lines(
             lines=snapshot.lines,
             visible_top=snapshot.visible_top,
-            viewport_height=max(target_height - 1, 0),
+            viewport_height=max(target_height - (1 if show_status else 0), 0),
             position=position,
             source_height=snapshot.height,
             source_width=snapshot.width,
